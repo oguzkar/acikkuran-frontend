@@ -6,6 +6,103 @@ import { Tab, TabList, TabPanel, TabText, Tabs } from "./tabs.style";
 const VerseTranslation = styled.li``;
 const VerseHeroTranslation = styled.div``;
 const VerseHeroAuthor = styled.div``;
+const UserTranslationCard = styled.div`
+  ${({ theme }) => css`
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      resize: vertical;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid ${theme.neutralLighter};
+      background: #fff;
+      font-size: 0.95em;
+      color: ${theme.neutralDark};
+      font-family: inherit;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      
+      &:focus {
+        outline: none;
+        border-color: ${theme.secondaryColor};
+      }
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .footnotes-section {
+      margin: 12px 0;
+      padding: 12px;
+      background: ${theme.neutralLightest || "#f9f9f9"};
+      border-radius: 6px;
+    }
+
+    .footnotes-title {
+      display: block;
+      font-size: 0.9em;
+      margin-bottom: 10px;
+      color: ${theme.neutralDark};
+    }
+
+    .footnote-item {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      textarea {
+        flex: 1;
+        min-height: 60px;
+        margin-bottom: 0;
+        font-size: 0.9em;
+      }
+    }
+
+    .footnote-number {
+      flex-shrink: 0;
+      width: 40px;
+      font-weight: 600;
+      color: ${theme.secondaryColor};
+      padding-top: 10px;
+      text-align: center;
+    }
+
+    .footnote-remove {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: ${theme.danger || "#dc3545"};
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1.2em;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  `}
+`;
+
+const UserTranslationStatus = styled.p`
+  margin-top: 10px;
+  color: ${({ theme }) => theme.secondaryColor};
+`;
 const VerseArabic = styled.div``;
 const VerseTranscription = styled.div``;
 const VerseTranslations = styled.ul``;
@@ -359,6 +456,8 @@ export {
   VerseHeroTranslation,
   VerseTranslations,
   VerseArabic,
+  UserTranslationCard,
+  UserTranslationStatus,
   VerseTranscription,
   VerseText,
   CommonNavigation,

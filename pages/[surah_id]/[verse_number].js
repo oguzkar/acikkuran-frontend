@@ -114,6 +114,7 @@ const Verse = (props) => {
     settings,
     authorSelections,
     locale,
+    userTranslation: userTranslationInitial,
   } = props;
 
   if (errorCode) {
@@ -153,6 +154,9 @@ const Verse = (props) => {
   const [navWidth, setNavWidth] = useState(
     theme.awesomegrid.breakpoints.lg * 16
   );
+  const [userTranslation, setUserTranslation] = useState(
+    userTranslationInitial || null
+  );
 
   useEffect(() => {
     setNavWidth(window.innerWidth);
@@ -182,6 +186,10 @@ const Verse = (props) => {
       setIsBookmarked(false);
     };
   }, [verse]);
+
+  useEffect(() => {
+    setUserTranslation(userTranslationInitial || null);
+  }, [userTranslationInitial, verse?.id]);
 
   const [_, setModalInfo] = useRecoilState(modalState);
   const [targetVerse, setTargetVerseValue] = useRecoilState(targetVerseState);
@@ -239,6 +247,26 @@ const Verse = (props) => {
     });
     return filteredcurrentAuthorsList;
   }, [currentAuthorsList, router]);
+
+  const translationsWithUser = useMemo(() => {
+    const list = computedTranslations.filter(Boolean);
+
+    if (userTranslation?.text) {
+      list.unshift({
+        id: `user-${verse.id}`,
+        author: {
+          id: "user",
+          name: t("user_translation__author_name"),
+          description: t("user_translation__author_desc"),
+          language: userTranslation.language || locale,
+        },
+        text: userTranslation.text,
+        footnotes: userTranslation.footnotes || [],
+      });
+    }
+
+    return list;
+  }, [computedTranslations, userTranslation, verse.id, t, locale]);
 
   const analyticsId = process.env.NEXT_PUBLIC_ANALYTICS_ID;
 
@@ -645,30 +673,49 @@ const Verse = (props) => {
                           </TabText>
                         </Tab>
                         {!isAmp && selectedVerseTab === 1 && (
-                          <TabListFlexAction
-                            aria-label={escapeHtml(
-                              t("author_selection__choose_sort_label")
+                          <>
+                            {session?.user?.id && (
+                              <TabListFlexAction
+                                aria-label={t("user_translation__title")}
+                                onClick={() => {
+                                  setModalInfo({
+                                    openedModal: "userTranslation",
+                                    modalProps: {
+                                      verseId: verse.id,
+                                      onSaved: setUserTranslation,
+                                      initialTranslation: userTranslation,
+                                    },
+                                  });
+                                }}
+                              >
+                                <RiQuillPenLine />
+                              </TabListFlexAction>
                             )}
-                            onClick={() => {
-                              setModalInfo({
-                                openedModal: "authorSelection",
-                                modalProps: {
-                                  currentAuthorsList,
-                                  setCurrentAuthorsList,
-                                  authorSelections,
-                                },
-                              });
-                            }}
-                          >
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: t(
-                                  "author_selection__choose_sort_label"
-                                ),
+                            <TabListFlexAction
+                              aria-label={escapeHtml(
+                                t("author_selection__choose_sort_label")
+                              )}
+                              onClick={() => {
+                                setModalInfo({
+                                  openedModal: "authorSelection",
+                                  modalProps: {
+                                    currentAuthorsList,
+                                    setCurrentAuthorsList,
+                                    authorSelections,
+                                  },
+                                });
                               }}
-                            />
-                            <RiDragDropLine />
-                          </TabListFlexAction>
+                            >
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: t(
+                                    "author_selection__choose_sort_label"
+                                  ),
+                                }}
+                              />
+                              <RiDragDropLine />
+                            </TabListFlexAction>
+                          </>
                         )}
                       </React.Fragment>
                     )}
@@ -736,7 +783,7 @@ const Verse = (props) => {
                     <React.Fragment>
                       <TabPanel>
                         <VerseTranslations>
-                          {computedTranslations.map((item) => {
+                          {translationsWithUser.map((item) => {
                             return (
                               item && (
                                 <VerseTranslation key={item.id}>
@@ -798,37 +845,56 @@ const Verse = (props) => {
                       </Tab> */}
                         </div>
                         {!isAmp && (
-                          <TabListFlexAction
-                            aria-label={escapeHtml(
-                              t("author_selection__choose_sort_label")
+                          <>
+                            {session?.user?.id && (
+                              <TabListFlexAction
+                                aria-label={t("user_translation__title")}
+                                onClick={() => {
+                                  setModalInfo({
+                                    openedModal: "userTranslation",
+                                    modalProps: {
+                                      verseId: verse.id,
+                                      onSaved: setUserTranslation,
+                                      initialTranslation: userTranslation,
+                                    },
+                                  });
+                                }}
+                              >
+                                <RiQuillPenLine />
+                              </TabListFlexAction>
                             )}
-                            onClick={() => {
-                              setModalInfo({
-                                openedModal: "authorSelection",
-                                modalProps: {
-                                  currentAuthorsList,
-                                  setCurrentAuthorsList,
-                                  authorSelections,
-                                },
-                              });
-                            }}
-                          >
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: t(
-                                  "author_selection__choose_sort_label"
-                                ),
+                            <TabListFlexAction
+                              aria-label={escapeHtml(
+                                t("author_selection__choose_sort_label")
+                              )}
+                              onClick={() => {
+                                setModalInfo({
+                                  openedModal: "authorSelection",
+                                  modalProps: {
+                                    currentAuthorsList,
+                                    setCurrentAuthorsList,
+                                    authorSelections,
+                                  },
+                                });
                               }}
-                            />
-                            <RiDragDropLine />
-                          </TabListFlexAction>
+                            >
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: t(
+                                    "author_selection__choose_sort_label"
+                                  ),
+                                }}
+                              />
+                              <RiDragDropLine />
+                            </TabListFlexAction>
+                          </>
                         )}
                       </TabListFlex>
                     </TabList>
 
                     <TabPanel>
                       <VerseTranslations>
-                        {computedTranslations.map((item) => {
+                        {translationsWithUser.map((item) => {
                           return (
                             item && (
                               <VerseTranslation key={item.id}>
@@ -910,6 +976,20 @@ export async function getServerSideProps(ctx) {
   const { data: verseWordsData } = await fetchJson(
     `${process.env.NEXT_PUBLIC_API_URL}/surah/${surah_id}/verse/${verse_number}/verseparts`
   );
+
+  let userTranslation = null;
+  if (session?.user?.id && verseData?.id) {
+    try {
+      const { data: userTranslationData } = await fetchJson(
+        `${process.env.NEXT_PUBLIC_API_URL}/user/translation?user_id=${session.user.id}&verse_id=${verseData.id}`
+      );
+      if (userTranslationData) {
+        userTranslation = userTranslationData;
+      }
+    } catch (err) {
+      userTranslation = null;
+    }
+  }
   if (
     verseData?.surah &&
     verseTranslationsData?.length > 0 &&
@@ -938,6 +1018,7 @@ export async function getServerSideProps(ctx) {
         },
         translation: verseData.translation,
         translations: verseTranslationsData,
+        userTranslation,
         words: verseWordsData,
         ...(await serverSideTranslations(locale, ["common"])),
       },
