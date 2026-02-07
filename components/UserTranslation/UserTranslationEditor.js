@@ -88,14 +88,13 @@ const UserTranslationEditor = ({
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/user/translation`,
+        "/api/user/translation",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            user_id: session.user.id,
             verse_id: verseId,
             text: text.trim(),
             footnotes: footnotes.filter(f => f.text.trim()),
