@@ -1,6 +1,7 @@
 import sessionCookieControl from "lib/sessionCookieControl";
 import localesConfig from "locales.config";
 import { getServerSession } from "next-auth";
+import { getToken } from "next-auth/jwt";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -977,14 +978,27 @@ export async function getServerSideProps(ctx) {
     `${process.env.NEXT_PUBLIC_API_URL}/surah/${surah_id}/verse/${verse_number}/verseparts`
   );
 
+  // SECURITY: Fetch user translation using JWT token for authentication.
+  // The user_id is extracted from the token on the backend, not sent in the URL.
   let userTranslation = null;
   if (session?.user?.id && verseData?.id) {
     try {
-      const { data: userTranslationData } = await fetchJson(
-        `${process.env.NEXT_PUBLIC_API_URL}/user/translation?user_id=${session.user.id}&verse_id=${verseData.id}`
-      );
-      if (userTranslationData) {
-        userTranslation = userTranslationData;
+      const token = await getToken({ req: ctx.req, secret: process.env.NEXTAUTH_SECRET, raw: true });
+      if (token) {
+        const utRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/user/translation?verse_id=${verseData.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (utRes.ok) {
+          const utJson = await utRes.json();
+          if (utJson?.data) {
+            userTranslation = utJson.data;
+          }
+        }
       }
     } catch (err) {
       userTranslation = null;

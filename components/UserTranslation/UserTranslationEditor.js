@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
-import { useSession } from "next-auth/react";
+import { useSession, getSession } from "next-auth/react";
 import Button from "@components/common/Button";
 import {
   UserTranslationCard,
@@ -32,9 +32,28 @@ const UserTranslationEditor = ({
 
     let active = true;
     setStatus("loading");
-    fetchJson(
-      `${process.env.NEXT_PUBLIC_API_URL}/user/translation?user_id=${session.user.id}&verse_id=${verseId}`
-    )
+
+    // SECURITY: Fetch user translation using JWT token for authentication.
+    // The user_id is extracted from the token on the backend, not sent in the URL.
+    getSession()
+      .then((currentSession) => {
+        const accessToken = currentSession?.accessToken;
+        if (!accessToken) {
+          throw new Error("no-token");
+        }
+        return fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/user/translation?verse_id=${verseId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+      })
+      .then((res) => {
+        if (!res.ok) throw new Error("fetch-failed");
+        return res.json();
+      })
       .then(({ data }) => {
         if (!active) return;
         if (data) {
