@@ -163,5 +163,21 @@
     "social_urls__twitter": "https://x.com/acikkuran",
     "social_urls__instagram": "https://www.instagram.com/acikkuran",
     "social_urls__patreon": "https://www.patreon.com/join/acikkuran",
+    "user_translation__title": "Kendi çevirin",
+    "user_translation__placeholder": "Çevirinizi buraya yazın...",
+    "user_translation__save": "Çeviriyi kaydet",
+    "user_translation__saving": "Kaydediliyor...",
+    "user_translation__save_success": "Çeviriniz kaydedildi.",
+    "user_translation__save_error": "Çeviri kaydedilemedi. Lütfen tekrar deneyin.",
+    "user_translation__load_error": "Çeviriniz yüklenemedi.",
+
+    "user_translation__author_name": "Kendi çeviriniz",
+    "user_translation__author_desc": "",
+    "user_translation__empty_error": "Çeviri metni boş olamaz.",
+    "user_translation__footnotes_title": "Dipnotlar",
+    "user_translation__add_footnote": "Dipnot ekle",
+    "user_translation__footnote_placeholder": "Dipnot metnini girin...",
+    "user_translation__remove_footnote": "Dipnotu kaldır",
+
     "apps__android": "https://play.google.com/store/apps/details?id=com.acikkuranrn&utm_source=web"
 }

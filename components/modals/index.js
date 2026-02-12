@@ -9,6 +9,7 @@ import BookmarksModal from "./BookmarksModal";
 import LoginModal from "./LoginModal";
 import SettingsModal from "./SettingsModal";
 import StatsModal from "./StatsModal";
+import UserTranslationModal from "./UserTranslationModal";
 
 const Modals = (props) => {
   const { authorId } = props;
@@ -30,6 +31,9 @@ const Modals = (props) => {
       )}
       {modalInfo?.openedModal === "authorSelection" && (
         <AuthorSelectionModal modalKey="authorSelection" fullscreen={true} />
+      )}
+      {modalInfo?.openedModal === "userTranslation" && (
+        <UserTranslationModal modalKey="userTranslation" />
       )}
     </ModalProvider>
   );
